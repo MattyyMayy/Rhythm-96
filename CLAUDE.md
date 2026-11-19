@@ -12,6 +12,8 @@ Plain JavaScript (ES modules) and CSS, no framework. Vite is used only as the de
 - `npm run build`: writes a single self-contained `dist/index.html` with JS and CSS inlined
 - `npm run preview`: serves the built file
 
+Every push to `main` runs `.github/workflows/pages.yml`, which tests, builds and publishes `dist/` to GitHub Pages at https://mattyymayy.github.io/Rhythm-96/ (linked at the top of `README.md`).
+
 Run `npm test` after any change to `src/patterns.js`, `src/memory.js` or `src/audio/voices.js`. Run `npm run build` before calling a change done.
 
 ## Layout

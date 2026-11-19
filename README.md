@@ -2,6 +2,10 @@
 
 A playable rhythm machine that runs in your browser. Pick a preset, flip between variations, add fills, shape the sound with effects, or copy a preset into one of eight memories and rework it step by step. Every sound is synthesized live with the Web Audio API.
 
+### [▶ Open Rhythm-96 in your browser](https://mattyymayy.github.io/Rhythm-96/)
+
+No install needed. Press **Start** to hear it.
+
 ## Run it
 
 You need [Node.js](https://nodejs.org) (the LTS version) installed.
