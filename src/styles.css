@@ -12,6 +12,15 @@
   --f-brand:"Righteous","Trebuchet MS",sans-serif;
   --f-label:"Barlow Condensed","Arial Narrow","Helvetica Neue",sans-serif;
   --f-mono:"Share Tech Mono",ui-monospace,"SFMono-Regular",monospace;
+  --f-hand:"Permanent Marker","Comic Sans MS",cursive;
+  /* wear and patina */
+  --grime:rgba(46,30,12,.55); --dust:rgba(214,200,170,.10); --tape:#d9cba0; --tape-ink:#2b2a6b;
+  --screw-a:#e4e5e6; --screw-b:#7d8186;
+  /* procedural textures (inline SVG, no image files) */
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --mottle:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.012' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 -.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+  --scuff:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='360' fill='none' stroke-linecap='round'%3E%3Cg stroke='%23fff' stroke-opacity='.10' stroke-width='.7'%3E%3Cpath d='M30 40l120 9M60 300l70-31M210 120l140 18M380 60l90-40M420 260l70 22M150 200l-60 44M300 320l130-10M20 180l40-6M250 30l60 30M460 150l-30 60'/%3E%3C/g%3E%3Cg stroke='%23fff' stroke-opacity='.05' stroke-width='1.6'%3E%3Cpath d='M100 90q60 10 120-6M330 220q50 20 110 4M40 250q30-18 70-12'/%3E%3C/g%3E%3Cg stroke='%23000' stroke-opacity='.25' stroke-width='.6'%3E%3Cpath d='M180 60l30 4M400 300l-26 12M90 150l20 16M480 90l12 22'/%3E%3C/g%3E%3C/svg%3E");
+  --wear-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -3.2 2.65'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E");
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -79,18 +88,20 @@ button:focus-visible,.knob:focus-visible,select:focus-visible{outline:2px solid 
 .strip i.acc{outline:1px solid rgba(255,171,61,.35);outline-offset:1px}
 
 /* deck */
-.deck{padding:18px 20px 22px;display:grid;gap:22px;
+.deck{container-type:inline-size;padding:18px 20px 22px;display:grid;gap:22px;
   background:repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px), var(--deck)}
 .sec-h{display:flex;align-items:center;gap:10px;margin:0 0 12px;font:700 12px var(--f-label);letter-spacing:.22em;text-transform:uppercase;color:var(--label-dim)}
 .sec-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--deck-line),transparent)}
-.row1{display:flex;flex-wrap:wrap;gap:22px 30px;align-items:flex-start;justify-content:space-between}
-.knobs{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end}
+.row1{display:flex;flex-wrap:nowrap;gap:22px clamp(14px,3cqi,30px);align-items:flex-start;justify-content:space-between}
+.row1 > :first-child{flex:1 1 auto;min-width:0}
+.row1 > .sw{flex:none}
+.knobs{display:flex;flex-wrap:nowrap;gap:18px clamp(4px,1.6cqi,22px);align-items:flex-end;justify-content:space-between}
 
 /* knobs */
-.kw{display:flex;flex-direction:column;align-items:center;gap:8px;width:76px}
-.kw.big{width:104px}
-.knob{--ks:56px;width:var(--ks);height:var(--ks);position:relative;touch-action:none;cursor:ns-resize;border-radius:50%;margin-top:10px}
-.kw.big .knob{--ks:80px}
+.kw{display:flex;flex-direction:column;align-items:center;gap:8px;flex:1 1 0;min-width:0;max-width:84px}
+.kw.big{flex-grow:1.35;max-width:108px}
+.knob{--ks:clamp(34px,5.6cqi,56px);width:var(--ks);height:var(--ks);position:relative;touch-action:none;cursor:ns-resize;border-radius:50%;margin-top:10px}
+.kw.big .knob{--ks:clamp(46px,8cqi,80px)}
 .knob .ticks{position:absolute;inset:-11px;border-radius:50%;
   background:repeating-conic-gradient(from -136deg, rgba(235,229,214,.7) 0deg 2deg, transparent 2deg 27deg);
   -webkit-mask:radial-gradient(circle, transparent 0 calc(50% - 6px), #000 calc(50% - 6px) 50%, transparent 50%), conic-gradient(from 135deg, transparent 0 90deg, #000 90deg);
@@ -107,14 +118,14 @@ button:focus-visible,.knob:focus-visible,select:focus-visible{outline:2px solid 
   background:repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.12) 0 1px, rgba(0,0,0,.05) 1px 2px)}
 .knob .ptr{position:absolute;left:calc(50% - 2px);top:3%;width:4px;height:30%;border-radius:2px;background:var(--rust);box-shadow:0 0 0 1px rgba(0,0,0,.35)}
 .knob.grab .rot{box-shadow:0 4px 8px rgba(0,0,0,.75),0 0 0 2px rgba(255,171,61,.35)}
-.kl{font:700 12px var(--f-label);letter-spacing:.16em;text-transform:uppercase;color:var(--label)}
-.kv{font:13px var(--f-mono);color:var(--amber);font-variant-numeric:tabular-nums;min-height:16px}
+.kl{font:700 clamp(9px,1.25cqi,12px) var(--f-label);letter-spacing:clamp(.04em,.18cqi,.16em);white-space:nowrap;text-transform:uppercase;color:var(--label)}
+.kv{font:clamp(10px,1.35cqi,13px) var(--f-mono);white-space:nowrap;color:var(--amber);font-variant-numeric:tabular-nums;min-height:16px}
 
 /* switches */
 .sw{display:flex;flex-direction:column;gap:10px}
 .seg{display:flex;gap:8px}
-.mini{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:48px}
-.mini .key{width:48px;height:34px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.mini .key{width:clamp(32px,4.8cqi,48px);height:34px}
 .led{display:block;width:9px;height:9px;border-radius:50%;background:var(--led-off);box-shadow:inset 0 1px 2px rgba(0,0,0,.8)}
 .led.on{background:radial-gradient(circle at 40% 35%,#ffd7b8,var(--led) 60%);box-shadow:0 0 8px rgba(255,80,50,.8)}
 .led.blink{animation:blink .45s steps(2,start) infinite}
@@ -142,18 +153,15 @@ button:focus-visible,.knob:focus-visible,select:focus-visible{outline:2px solid 
 .key.rust .n{opacity:.75}
 
 /* effects */
-.knobs.fx{gap:18px 22px;align-items:flex-start}
-.fxsw{align-self:center;margin-top:-6px}
+.knobs.fx{align-items:flex-start}
+.fxsw{flex:none;align-self:center;margin-top:-6px}
 .fxsw .seg{gap:6px}
-.fxsw .mini{min-width:40px}
-.fxsw .mini .key{width:40px;height:30px}
+.fxsw .mini .key{width:clamp(28px,4cqi,40px);height:30px}
 
 /* sound kits */
 .kits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 10px}
-.kkey{min-height:66px;padding:9px 10px 10px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;align-items:center;gap:4px 9px;text-align:left}
-.kkey .led{grid-row:1}
+.kkey{min-height:52px;padding:8px 12px;display:flex;align-items:center;justify-content:center;gap:10px}
 .kkey .t{font:400 20px/1 var(--f-brand);letter-spacing:.06em;color:var(--label)}
-.kkey .d{grid-column:1 / -1;font:500 12px/1.2 var(--f-label);letter-spacing:.04em;color:var(--label-dim)}
 .kkey[aria-pressed="true"] .t{color:var(--amber);text-shadow:0 0 6px rgba(255,160,50,.45)}
 
 /* bottom row */
@@ -206,6 +214,112 @@ select{font:600 13px var(--f-label);letter-spacing:.06em;background:#2a2724;colo
 .foot{max-width:1020px;margin:14px auto 0;font:500 13px var(--f-label);color:var(--label-dim);letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:center}
 .foot kbd{font:12px var(--f-mono);padding:1px 6px;border-radius:4px;background:#2a2724;color:var(--label)}
 
+
+/* ===================== patina: a real machine that has seen some gigs ===================== */
+body{background:var(--grain) 0 0/180px, radial-gradient(120% 70% at 50% 0%, var(--room-2), var(--room) 70%) var(--room);background-blend-mode:soft-light,normal}
+
+/* walnut: real grain, darker oiled edges, rubbed corners */
+.cheek{position:relative;overflow:hidden}
+.cheek::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(60% 6% at 50% 0%, rgba(255,214,170,.18), transparent),
+    radial-gradient(60% 6% at 50% 100%, rgba(255,214,170,.14), transparent),
+    var(--mottle) 0 0/420px, var(--grain) 0 0/180px;
+  background-blend-mode:normal,normal,overlay,overlay;mix-blend-mode:overlay;opacity:.75}
+
+/* faceplate: brushed aluminium with fingerprints, scratches, grime in the edges */
+.face{position:relative;
+  background:
+    var(--scuff) 0 0/520px 360px,
+    radial-gradient(18% 40% at 12% 70%, rgba(255,255,255,.18), transparent 70%),
+    radial-gradient(10% 30% at 78% 30%, rgba(80,70,50,.12), transparent 70%),
+    var(--grain) 0 0/180px,
+    repeating-linear-gradient(90deg, rgba(255,255,255,.10) 0 1px, rgba(0,0,0,.035) 1px 2px, transparent 2px 4px),
+    linear-gradient(180deg, var(--alu-a), var(--alu-b));
+  background-blend-mode:normal,soft-light,multiply,overlay,normal,normal;
+  box-shadow:inset 0 -1px 0 rgba(255,255,255,.4), inset 0 0 18px rgba(60,48,30,.35)}
+
+/* screws */
+.screw{position:absolute;width:11px;height:11px;border-radius:50%;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(var(--r,0deg), transparent 44%, rgba(0,0,0,.65) 44% 56%, transparent 56%),
+    linear-gradient(calc(var(--r,0deg) + 90deg), transparent 44%, rgba(0,0,0,.65) 44% 56%, transparent 56%),
+    radial-gradient(circle at 35% 30%, var(--screw-a), var(--screw-b) 75%);
+  box-shadow:0 1px 1px rgba(255,255,255,.5), inset 0 -1px 2px rgba(0,0,0,.45), 0 0 0 1.5px rgba(0,0,0,.25)}
+.face .screw.tl{top:7px;left:7px}.face .screw.tr{top:7px;right:7px}
+.face .screw.bl{bottom:7px;left:7px}.face .screw.br{bottom:7px;right:7px}
+.deck{position:relative}
+.deck .screw{filter:brightness(.55)}
+.deck .screw.bl{bottom:7px;left:7px}.deck .screw.br{bottom:7px;right:7px}
+
+/* display glass: reflection, dust, faint scanlines */
+.vfd{position:relative;overflow:hidden}
+.vfd::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,.10) 0 18%, transparent 18.5% 60%, rgba(255,255,255,.04) 60.5% 70%, transparent 70.5%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px),
+    var(--grain) 0 0/180px;
+  background-blend-mode:normal,normal,soft-light;opacity:.8}
+
+/* control deck: textured black paint, palm wear where hands rest, scratches */
+.deck{
+  background:
+    var(--scuff) 40px 20px/520px 360px,
+    radial-gradient(45% 22% at 50% 98%, rgba(255,240,220,.05), transparent 70%),
+    radial-gradient(30% 18% at 88% 92%, rgba(255,240,220,.045), transparent 70%),
+    var(--mottle) 0 0/420px,
+    var(--grain) 0 0/180px,
+    var(--deck);
+  background-blend-mode:normal,normal,normal,soft-light,overlay,normal}
+.strip{background:var(--grain) 0 0/180px, #0f0e0d;background-blend-mode:overlay,normal}
+
+/* silkscreen print: worn in patches */
+.sec-h,.kl,.ml,.grp h4,.brand small,.lampbox span{
+  -webkit-mask-image:var(--wear-mask);mask-image:var(--wear-mask);
+  -webkit-mask-size:140px;mask-size:140px}
+.brand b{-webkit-mask-image:var(--wear-mask);mask-image:var(--wear-mask);-webkit-mask-size:220px;mask-size:220px}
+
+/* knobs: dusty knurling, scuffed caps */
+.knob .rot::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:var(--grain) 0 0/90px;mix-blend-mode:overlay;opacity:.7}
+.knob .cap{background:
+    radial-gradient(circle at 62% 70%, rgba(60,50,35,.22), transparent 30%),
+    radial-gradient(circle at 36% 28%, #fbfbfb 0, #c9ccd0 28%, #8f9398 70%, #5f6266 100%)}
+
+/* keys: yellowed plastic, grime in the edges, shine where fingers land */
+.key{overflow:hidden}
+.key::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+  background:
+    radial-gradient(55% 40% at 50% 45%, rgba(255,255,255,.10), transparent 70%),
+    var(--grain) 0 0/120px;
+  box-shadow:inset 0 0 6px 1px var(--grime);
+  mix-blend-mode:multiply;opacity:.55}
+.key.dark::after,.key.rust::after{mix-blend-mode:overlay;opacity:.6;box-shadow:inset 0 0 5px 1px rgba(0,0,0,.5)}
+.key:not(.dark):not(.rust){background:linear-gradient(180deg,#f5ecd6,var(--ivory) 30%,var(--ivory-2))}
+.rkey:nth-child(3n+1):not(.rust){background:linear-gradient(180deg,#f1e5c8,#e6d9b8 30%,#c4b48f)}
+.rkey:nth-child(4n+2):not(.rust){background:linear-gradient(180deg,#f3ead2,#e9dfc5 35%,#c6bb9e)}
+/* the keys that get pressed the most are worn smooth in the middle */
+#btnStart::before,.rkey[aria-label="Rock 1"]::before,.rkey[aria-label="House 1"]::before,.rkey[aria-label="Program 1"]::before,#btnFill::before{
+  content:"";position:absolute;inset:18% 16%;border-radius:40%;pointer-events:none;
+  background:radial-gradient(closest-side, rgba(255,255,255,.22), transparent);mix-blend-mode:screen}
+
+/* LEDs: little domed lenses in a black bezel */
+.led{box-shadow:inset 0 1px 2px rgba(0,0,0,.8), 0 0 0 1.5px #0b0a09, 0 1px 0 1.5px rgba(255,255,255,.08)}
+.led.on{box-shadow:0 0 8px rgba(255,80,50,.8), 0 0 0 1.5px #0b0a09}
+
+/* masking tape somebody wrote the set on */
+.taped{position:relative}
+.tape{position:absolute;right:6px;top:-10px;z-index:3;transform:rotate(-2.2deg);
+  padding:5px 16px 4px;font:400 15px/1 var(--f-hand);letter-spacing:.02em;color:var(--tape-ink);
+  background:var(--grain) 0 0/120px, linear-gradient(180deg, rgba(255,255,255,.18), transparent 40%), var(--tape);
+  background-blend-mode:multiply,normal,normal;opacity:.92;
+  clip-path:polygon(0 8%, 3% 0, 97% 4%, 100% 0, 99% 92%, 96% 100%, 2% 96%, 0 100%);
+  box-shadow:0 1px 2px rgba(0,0,0,.4)}
+
+/* program write drawer: same worn paint */
+.writer{background:var(--scuff) 0 0/520px 360px, var(--grain) 0 0/180px, linear-gradient(180deg,#1d1b19,#151413);
+  background-blend-mode:normal,overlay,normal}
+
 @media (max-width:640px){
   .device{grid-template-columns:14px minmax(0,1fr) 14px;border-radius:12px}
   .cheek.l{border-radius:12px 0 0 12px}.cheek.r{border-radius:0 12px 12px 0}
@@ -218,11 +332,25 @@ select{font:600 13px var(--f-label);letter-spacing:.06em;background:#2a2724;colo
   .grp{flex:1 1 100%}
   .kits{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grp .keys{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .knobs{justify-content:space-around;width:100%}
-  .row1 .sw{width:100%}
   .inst{grid-template-columns:repeat(4,minmax(0,1fr));flex-basis:100%}
   .transport{width:100%;justify-content:center}
   .tk .key,.tk.start .key{width:auto;min-width:120px}
   .writer{padding:14px 12px 16px}
+}
+/* Too narrow for one row (phones): knobs wrap into a tidy grid, Variation moves under them. */
+@container (max-width:520px){
+  .tape{font-size:13px;padding:4px 10px 3px}
+  .row1{flex-wrap:wrap}
+  .row1 > .sw{flex:1 1 100%}
+  .knobs{flex-wrap:wrap;justify-content:flex-start;row-gap:16px}
+  .kw,.kw.big{flex:0 0 calc((100% - 3 * 10px) / 4);max-width:none}
+  .knobs{column-gap:10px}
+  .knob{--ks:48px}
+  .kw.big .knob{--ks:56px}
+  .kl{font-size:11px;letter-spacing:.1em}
+  .kv{font-size:12px}
+  .fxsw{flex:0 0 calc((100% - 3 * 10px) / 4);align-self:flex-start;margin-top:14px}
+  .mini .key{width:44px}
+  .fxsw .mini .key{width:30px}
 }
 @media (prefers-reduced-motion:reduce){.led.blink{animation:none;opacity:.6}.key{transition:none}}

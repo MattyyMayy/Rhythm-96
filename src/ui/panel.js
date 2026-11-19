@@ -134,8 +134,9 @@ function initKits() {
   KITS.forEach(([id, name, desc]) => {
     const b = document.createElement('button');
     b.className = 'key dark kkey';
-    b.innerHTML = `<span class="led"></span><span class="t">${name}</span><span class="d">${desc}</span>`;
-    b.setAttribute('aria-label', `${name} sound kit: ${desc}`);
+    b.innerHTML = `<span class="led"></span><span class="t">${name}</span>`;
+    b.setAttribute('aria-label', `${name} sound kit`);
+    b.title = desc;
     b.addEventListener('click', () => setKit(id));
     el.appendChild(b);
     kitEls.push({ id, el: b, led: b.querySelector('.led') });

@@ -50,7 +50,8 @@ tests/                node:test unit tests.
 
 - Keep it dependency-free at runtime. Ask before adding a library.
 - 2-space indent, semicolons, single quotes, ES modules.
-- Every color and font comes from the tokens at the top of `styles.css`. The look is skeuomorphic hardware: walnut cheeks, brushed-metal faceplate, ivory and rust keys, amber display.
+- Every color and font comes from the tokens at the top of `styles.css`. The look is skeuomorphic hardware that has been used: walnut cheeks, brushed-metal faceplate with scratches and screws, textured black deck with palm wear, yellowed ivory and rust keys, worn silkscreen print, amber display behind glass, and a strip of masking tape. Textures are procedural inline SVG tokens (`--grain`, `--mottle`, `--scuff`, `--wear-mask`); do not add image files for them.
+- Knob rows: each knob group (Level & Tempo with Variation, Effects with the LP/HP switch) stays on one row. Sizes scale with container query units (`cqi`) on `.deck`; below a 520px container they wrap into a 4-column grid.
 - Must work at phone width (about 400px) with no horizontal page scroll; only the step grid scrolls sideways.
 - Keep controls keyboard reachable with visible focus, and keep `aria-label`/`aria-pressed` on buttons.
 - Memories are stored under the localStorage key `rhythm96-memories-v1` as an array of up to `MEM_COUNT` (8) patterns; shorter arrays from older saves load and the rest stay blank. If you change the stored format, bump the key or migrate, and keep `deser()` tolerant of bad data.
