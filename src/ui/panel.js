@@ -1,9 +1,9 @@
 // Front panel: knobs, rhythm select keys, variation, instrument cancels,
 // transport, the amber display, the beat lamp and the step-LED strip.
-import { S, on, sameSel } from '../state.js';
+import { S, on, emit, sameSel } from '../state.js';
 import { STYLES, GROUPS } from '../patterns.js';
-import { INST } from '../audio/voices.js';
-import { applyMix, getContext } from '../audio/engine.js';
+import { INST, KITS } from '../audio/voices.js';
+import { applyMix, applyKit, getContext } from '../audio/engine.js';
 import { MEM } from '../memory.js';
 import { visualQueue, select, setVariation, toggle, toggleFill, shownPattern, selectionName } from '../sequencer.js';
 import { Knob } from './knob.js';
@@ -25,6 +25,8 @@ function initKnobs() {
     fmt: (x) => x.toFixed(1), onChange: (x) => { S.accent = x; } });
   Knob($('kFill'), { steps: [0, 2, 4, 8, 12, 16], value: 0, reset: 0, out: 'vFill',
     fmt: (x) => (x ? 'every ' + x : 'off'), onChange: (x) => { S.autoFill = x; } });
+  Knob($('kSwing'), { min: 50, max: 75, value: S.swing, reset: 50, out: 'vSwing', wheel: 1,
+    fmt: (x) => (x === 50 ? 'off' : x + '%'), onChange: (x) => { S.swing = x; } });
   Knob($('kTempo'), { min: 40, max: 240, value: S.tempo, reset: 112, out: 'vTempo', wheel: 1,
     fmt: (x) => x + ' bpm', onChange: (x) => { S.tempo = x; dTempo.textContent = x; } });
 }
@@ -63,6 +65,37 @@ function renderKeys() {
     k.el.setAttribute('aria-pressed', isActive ? 'true' : 'false');
   }
 }
+
+/* ---------- sound kits ---------- */
+const kitEls = [];
+function setKit(id) {
+  S.kit = id;
+  applyKit();
+  emit('kit');
+}
+function initKits() {
+  const el = $('kits');
+  KITS.forEach(([id, name, desc]) => {
+    const b = document.createElement('button');
+    b.className = 'key dark kkey';
+    b.innerHTML = `<span class="led"></span><span class="t">${name}</span><span class="d">${desc}</span>`;
+    b.setAttribute('aria-label', `${name} sound kit: ${desc}`);
+    b.addEventListener('click', () => setKit(id));
+    el.appendChild(b);
+    kitEls.push({ id, el: b, led: b.querySelector('.led') });
+  });
+}
+function renderKits() {
+  for (const k of kitEls) {
+    const on = k.id === S.kit;
+    k.led.classList.toggle('on', on);
+    k.el.setAttribute('aria-pressed', String(on));
+  }
+}
+const nextKit = () => {
+  const i = KITS.findIndex((k) => k[0] === S.kit);
+  setKit(KITS[(i + 1) % KITS.length][0]);
+};
 
 /* ---------- variation ---------- */
 function initVariation() {
@@ -106,6 +139,7 @@ function initTransport() {
     if (e.target.closest('input,select,textarea,[role="slider"]')) return;
     if (e.code === 'Space') { e.preventDefault(); btnStart.classList.add('down'); toggle(); }
     else if (e.key === 'f' || e.key === 'F') { btnFill.classList.add('down'); toggleFill(); }
+    else if (e.key === 'k' || e.key === 'K') nextKit();
   });
   document.addEventListener('keyup', () => { btnStart.classList.remove('down'); btnFill.classList.remove('down'); });
 }
@@ -124,6 +158,7 @@ function renderDisplay() {
   if (S.active.kind === 'mem') vtxt = 'Memory';
   else if (S.variation === 'AB') vtxt = 'Var A+B' + (S.playing && lastStep?.v ? ' (' + lastStep.v + ')' : '');
   else vtxt = 'Var ' + S.variation;
+  vtxt += ' · Kit ' + KITS.find((k) => k[0] === S.kit)[1];
   const fillOn = S.fillQueued || (S.playing && lastStep?.fill);
   dSub.innerHTML = `${vtxt} <span class="tag${fillOn ? ' on' : ''}">Fill</span><span class="tag${S.queued ? ' on' : ''}">Next: ${S.queued ? selectionName(S.queued) : '—'}</span>`;
   dBar.textContent = S.playing
@@ -178,6 +213,7 @@ export function initPanel() {
   dName = $('dName'); dTempo = $('dTempo'); dSub = $('dSub'); dBar = $('dBar');
 
   initKnobs();
+  initKits();
   initRhythmKeys();
   initVariation();
   initInstruments();
@@ -186,9 +222,10 @@ export function initPanel() {
   on('selection', () => { renderKeys(); renderDisplay(); if (!S.playing) renderStrip(); });
   on('variation', () => { renderVariation(); renderDisplay(); if (!S.playing) renderStrip(); });
   on('transport', renderTransport);
+  on('kit', () => { renderKits(); renderDisplay(); });
   on('fill', () => { ledFill.classList.toggle('on', S.fillQueued); renderDisplay(); });
   on('memory', () => { if (!S.playing) renderStrip(); });
 
-  renderVariation(); renderKeys(); renderStrip(); renderTransport();
+  renderVariation(); renderKits(); renderKeys(); renderStrip(); renderTransport();
   requestAnimationFrame(frame);
 }

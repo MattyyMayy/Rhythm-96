@@ -1,10 +1,10 @@
 // AudioContext, mixer buses and the play() entry point.
 // The context is created lazily on the first user gesture (browsers block audio before that).
-import { makeVoices, VGROUP } from './voices.js';
+import { makeKits, VGROUP, KIT_TONE } from './voices.js';
 import { S } from '../state.js';
 
 let ctx = null;
-let master, drumBus, percBus, voices;
+let master, tone, drumBus, percBus, kits;
 
 export const getContext = () => ctx;
 
@@ -20,14 +20,16 @@ export function initAudio() {
 
   master = ctx.createGain(); drumBus = ctx.createGain(); percBus = ctx.createGain();
   drumBus.connect(master); percBus.connect(master);
-  master.connect(comp); comp.connect(ctx.destination);
+  tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.Q.value = 0.5;
+  master.connect(tone); tone.connect(comp); comp.connect(ctx.destination);
 
   const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
   const d = noiseBuf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
 
-  voices = makeVoices(ctx, noiseBuf);
+  kits = makeKits(ctx, noiseBuf);
   applyMix();
+  applyKit();
   return ctx;
 }
 
@@ -41,9 +43,16 @@ export function applyMix() {
   percBus.gain.setTargetAtTime(Math.min(1, S.bal / 5), t, 0.02);
 }
 
+/** Set the master tone for the selected sound kit. */
+export function applyKit() {
+  if (!ctx) return;
+  tone.frequency.setTargetAtTime(KIT_TONE[S.kit] || 18000, ctx.currentTime, 0.03);
+}
+
 export function play(key, time, vel) {
   if (!ctx) return;
-  voices[key](time, vel, VGROUP[key] === 'drum' ? drumBus : percBus);
+  const kit = kits[S.kit] || kits[96];
+  kit[key](time, vel, VGROUP[key] === 'drum' ? drumBus : percBus);
 }
 
 /** Play one voice right now (row labels, step entry). */

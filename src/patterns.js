@@ -24,9 +24,13 @@ export const FILLS = {
   trip: P(12, 3, { BD: 'x.....x.....', SD: '...x..xxxxxx', HH: 'x.xx.x......' }, 'x..x..x..x.x'),
   waltz: P(12, 4, { BD: 'x...........', SD: '....x.x.xxxx', HH: 'x...x.......' }, 'x...x...x..x'),
   latin: P(16, 4, { BD: 'x.......x.......', CGH: 'x.x...x.x...xx..', CGL: '....x.x...x...xx', CB: 'x...x...x...x...' }, 'x...x...x...xxxx'),
+  jazz: P(12, 3, { BD: 'x.....x.....', SD: '..x..xx.xxxx', CY: 'x..x.x......', HH: '...x.....x..' }, '..x..x..x.xx'),
+  jwaltz: P(9, 3, { BD: 'x........', SD: '...x.xxxx', CY: 'x..x.....' }, 'x..x..x.x'),
+  club: P(16, 4, { BD: 'x...x...x...x...', CP: '........x.x.xxxx', SD: '............x.xx', OH: '..x...x.........' }, '....x...x...xxxx'),
+  garage: P(16, 4, { BD: 'x.........x.....', SD: '.......x.x.xx.xx', CP: '....x.......x...', HH: '..x...x.' }, '....x...x...x.xx'),
 };
 
-/** 17 styles x 2 variations = 34 preset rhythms. g = panel group id. */
+/** 26 styles x 2 variations = 52 preset rhythms. g = panel group id. */
 export const STYLES = [
   { name: 'Rock 1', g: 'pop', fill: 'rock',
     A: P(16, 4, { BD: 'x.......x.x.....', SD: '....x.......x...', HH: 'x.x.' }, 'x...x...x...x...'),
@@ -79,12 +83,43 @@ export const STYLES = [
   { name: 'Rhumba', g: 'latin', fill: 'latin',
     A: P(16, 4, { BD: 'x...', CV: 'x..x...x..x.x...', MA: 'x.x.', BOH: '..x.' }, 'x..x...x..x.x...'),
     B: P(16, 4, { BD: 'x..xx..x', CV: 'x..x...x..x.x...', MA: 'x', BOH: '..x.', BOL: 'x.......', GU: 'x...' }, 'x..x...x..x.x...') },
+  { name: 'Jazz Ride', g: 'jazz', fill: 'jazz',
+    A: P(12, 3, { CY: 'x..x.xx..x.x', HH: '...x.....x..', BD: 'x..x..x..x..' }, '...x.....x..'),
+    B: P(12, 3, { CY: 'x..x.xx..x.x', HH: '...x.....x..', BD: 'x..x..x..x..', SD: '.....x....x.', RS: '..x.........' }, '...x.....x..') },
+  { name: 'Brushes', g: 'jazz', fill: 'jazz',
+    A: P(12, 3, { MA: 'x.xx.xx.xx.x', SD: '...x.....x..', HH: '...x.....x..', BD: 'x.....x.....' }, '...x.....x..'),
+    B: P(12, 3, { MA: 'x.xx.xx.xx.x', SD: '...x..x..x.x', HH: '...x.....x..', BD: 'x.....x.....', CY: 'x...........' }, '...x.....x..') },
+  { name: 'Jazz Waltz', g: 'jazz', fill: 'jwaltz',
+    A: P(9, 3, { CY: 'x..x.xx.x', HH: '...x..x..', BD: 'x........' }, 'x........'),
+    B: P(9, 3, { CY: 'x..x.xx.x', HH: '...x..x..', BD: 'x.....x..', SD: '..x..x...' }, 'x........') },
+  { name: 'House 1', g: 'club', fill: 'club',
+    A: P(16, 4, { BD: 'x...', CP: '....x.......x...', OH: '..x.', HH: 'x...' }, 'x...'),
+    B: P(16, 4, { BD: 'x...', CP: '....x.......x...', OH: '..x.', HH: 'xx.x', TB: '....x.......x...' }, 'x...') },
+  { name: 'House 2', g: 'club', fill: 'club',
+    A: P(16, 4, { BD: 'x...', CP: '....x.......x...', HH: '..x.', MA: 'x.xx', RS: '...x..x.......x.' }, 'x...'),
+    B: P(16, 4, { BD: 'x...', CP: '....x.......x...', HH: '..x.', MA: 'x.xx', CGH: '..x.....x..x....', CGL: '......x.......x.', OH: '..............x.' }, 'x...') },
+  { name: 'Techno 1', g: 'club', fill: 'club',
+    A: P(16, 4, { BD: 'x...', OH: '..x.', HH: 'xx.x' }, 'x...'),
+    B: P(16, 4, { BD: 'x...', OH: '..x.', HH: 'xx.x', CP: '....x.......x...', RS: '.......x..x.....', CY: 'x...............' }, 'x...') },
+  { name: 'Techno 2', g: 'club', fill: 'club',
+    A: P(16, 4, { BD: 'x...', OH: '..x.', HH: 'xx.x', RS: '..x..x....x..x..' }, '..x.'),
+    B: P(16, 4, { BD: 'x...x...x...x.x.', OH: '..x.', HH: 'xx.x', RS: '..x..x....x..x..', CP: '....x.......x...', MB: '.......x.......x' }, '..x.') },
+  { name: '2-Step', g: 'ukg', fill: 'garage',
+    A: P(16, 4, { BD: 'x.........x.....', CP: '....x.......x...', HH: '..x.', RS: '.......x.......x' }, '....x.......x...'),
+    B: P(16, 4, { BD: 'x.........x..x..', CP: '....x.......x...', SD: '....x.......x...', HH: '.xx.', OH: '..............x.', MA: 'x.xx' }, '....x.......x...') },
+  { name: 'Speed Garage', g: 'ukg', fill: 'garage',
+    A: P(16, 4, { BD: 'x...', CP: '....x.......x...', HH: '.x.x', OH: '..x.' }, 'x...'),
+    B: P(16, 4, { BD: 'x...', CP: '....x.......x...', HH: '.x.x', OH: '..x.', RS: '......x..x....x.', SD: '...............x', TB: '....x.......x...' }, 'x...') },
 ];
 
-export const GROUPS = [['pop', 'Rock & Pop'], ['ball', 'Ballroom'], ['latin', 'Latin'], ['mem', 'Memory']];
+export const GROUPS = [
+  ['pop', 'Rock & Pop'], ['ball', 'Ballroom'], ['latin', 'Latin'],
+  ['jazz', 'Jazz'], ['club', 'House & Techno'], ['ukg', 'UK Garage'], ['mem', 'Memory'],
+];
 
 /** Pick the fill for a pattern that isn't a preset (user memories). */
 export function fillForShape(p) {
+  if (p.div === 3 && p.len === 9) return FILLS.jwaltz;
   if (p.div === 3) return FILLS.trip;
   if (p.len % 3 === 0) return FILLS.waltz;
   return FILLS.rock;

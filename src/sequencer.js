@@ -12,6 +12,16 @@ const TICK_MS = 25;
 const BASE_VEL = 0.62;
 
 export const visualQueue = [];
+
+/**
+ * Swing: how late a step plays, as a fraction of one step.
+ * Only every second step of a straight (even) grid moves; triplet feels are already swung.
+ * 50 = straight, 66 = triplet feel, 75 = hard dotted feel.
+ */
+export function swingOffset(step, div, swing) {
+  if (div % 2 !== 0 || step % 2 === 0) return 0;
+  return Math.max(0, Math.min(75, swing) - 50) / 50;
+}
 let timer = null;
 
 export const stylePattern = (i, v) => STYLES[i][v];
@@ -49,14 +59,16 @@ function beginBar() {
 
 function scheduleStep() {
   if (S.step === 0) beginBar();
-  const p = S.barPat, t = S.nextTime, i = S.step;
+  const p = S.barPat, i = S.step;
+  const stepDur = 60 / S.tempo / p.div;
+  const t = S.nextTime + swingOffset(i, p.div, S.swing) * stepDur;
   const vel = p.acc[i] ? BASE_VEL * (1 + (S.accent / 10) * 1.1) : BASE_VEL;
   for (const k of VKEYS) {
     if (!p.v[k][i] || S.cancel.has(k)) continue;
     play(S.metal && (k === 'HH' || k === 'OH') ? 'MB' : k, t, vel);
   }
   visualQueue.push({ t, step: i, len: p.len, div: p.div, pacc: p.acc, fill: S.barFill, bar: S.bar, v: S.barVar, base: S.barBase });
-  S.nextTime += 60 / S.tempo / p.div;
+  S.nextTime += stepDur;
   S.step++;
   if (S.step >= p.len) { S.step = 0; S.bar++; }
 }

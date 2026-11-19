@@ -3,7 +3,7 @@ import { P } from './patterns.js';
 import { VKEYS } from './audio/voices.js';
 
 const KEY = 'rhythm96-memories-v1';
-export const LENGTHS = [12, 16, 24, 32];
+export const LENGTHS = [9, 12, 16, 24, 32];
 
 export const blank = (len = 16, div = 4) => P(len, div, {}, '');
 

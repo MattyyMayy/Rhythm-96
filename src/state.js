@@ -6,9 +6,12 @@
 //   'transport' — started or stopped
 //   'fill'      — manual fill armed or consumed
 //   'memory'    — a memory pattern was edited
+//   'kit'       — the sound kit changed
 
 export const S = {
   tempo: 112, vol: 7, bal: 5, accent: 6, autoFill: 0,
+  swing: 50,                          // 50 = straight; up to 75 delays every second sixteenth
+  kit: '96',                          // sound kit id, see KITS in audio/voices.js
   variation: 'A',                     // 'A' | 'B' | 'AB'
   active: { kind: 'preset', i: 0 },   // { kind: 'preset' | 'mem', i }
   queued: null,                       // selection waiting for the next bar while playing

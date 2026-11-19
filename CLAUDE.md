@@ -1,6 +1,6 @@
 # Rhythm-96
 
-A playable browser rhythm machine in the style of late-1970s preset drum boxes: 34 preset rhythms (17 styles × variations A/B), A+B alternation, manual and automatic fill-ins, accent, drum/percussion balance, instrument cancels, and four programmable memories with a step editor. All sound is synthesized live with the Web Audio API.
+A playable browser rhythm machine in the style of late-1970s preset drum boxes: 52 preset rhythms (26 styles × variations A/B, including Jazz, House & Techno and UK Garage), four sound kits, swing, A+B alternation, manual and automatic fill-ins, accent, drum/percussion balance, instrument cancels, and four programmable memories with a step editor. All sound is synthesized live with the Web Audio API.
 
 Plain JavaScript (ES modules) and CSS, no framework. Vite is used only as the dev server and bundler.
 
@@ -34,11 +34,13 @@ tests/                node:test unit tests.
 
 ## How it fits together
 
-- **State and events.** Modules read and write `S` directly and call `emit()` after a change. Events: `selection`, `variation`, `transport`, `fill`, `memory`. UI modules subscribe with `on()` and re-render. Avoid direct imports between `panel.js` and `writer.js` beyond `setPlayhead`.
+- **State and events.** Modules read and write `S` directly and call `emit()` after a change. Events: `selection`, `variation`, `transport`, `fill`, `memory`, `kit`. UI modules subscribe with `on()` and re-render. Avoid direct imports between `panel.js` and `writer.js` beyond `setPlayhead`.
 - **Pattern format.** `{ len, div, acc: bool[], v: { [voiceKey]: bool[] } }`. `len` is steps per bar, `div` is steps per beat (4 = sixteenths, 3 = triplet eighths). Write new presets with the `P(len, div, parts, accent)` helper using `x`/`.` strings; short strings repeat to fill the bar.
 - **Timing.** `sequencer.js` uses the look-ahead pattern: a 25 ms `setInterval` schedules notes up to 120 ms ahead on `AudioContext.currentTime`. Never schedule audio from `requestAnimationFrame` or play notes "now" in the timer. The UI reads `visualQueue` in the animation loop so LEDs match what is heard.
 - **Bar-line behavior.** Choosing a rhythm while playing queues it (`S.queued`) and it takes over at the next bar. Fills replace one whole bar. Auto Fill plays a fill on every Nth bar.
-- **Voices.** Each voice in `makeVoices()` is `(time, velocity, outputNode)`. Adding a voice means: add it to `VOICES` (key, name, bus), add a recipe in `makeVoices`, and optionally to an `INST` cancel group. Patterns and the editor pick it up automatically.
+- **Voices.** Each voice recipe is `(time, velocity, outputNode)`. Adding a voice means: add it to `VOICES` (key, name, bus), add a recipe to the `base` kit in `makeKits`, and optionally to an `INST` cancel group. Patterns and the editor pick it up automatically.
+- **Sound kits.** `KITS` in `voices.js` lists the kits; "96" (the `base` recipes) is the default. Other kits override only some voices and fall back to "96" for the rest. `KIT_TONE` sets a master low-pass per kit. `S.kit` holds the current kit; `engine.play()` reads it for every note, so a kit change takes effect on the next note. Adding a kit means: add it to `KITS` and `KIT_TONE`, add an override object in `makeKits`, and return it.
+- **Swing.** `S.swing` is 50 (straight) to 75. `swingOffset()` in `sequencer.js` delays every second step of an even grid; the bar grid (`S.nextTime`) itself stays straight.
 - **Audio start.** Browsers block audio until a user gesture, so `initAudio()` runs on the first Start or audition click.
 
 ## Conventions
