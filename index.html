@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Parlor PR-34</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Righteous&family=Share+Tech+Mono&display=swap">
+</head>
+<body>
+<main>
+  <div class="device">
+    <div class="cheek l" aria-hidden="true"></div>
+    <div class="chassis">
+      <header class="face">
+        <div class="brand"><b>PARLOR<span>·</span>PR-34</b><small>Programmable Rhythm Unit</small></div>
+        <div class="vfd" aria-live="polite">
+          <div class="big" id="dName">Rock 1</div>
+          <div class="tempo" id="dTempo">112</div>
+          <div class="sub" id="dSub">Var A <span class="tag" id="dFill">Fill</span><span class="tag" id="dQ">Next</span></div>
+          <div class="sub r" id="dBar">Stopped</div>
+        </div>
+        <div class="lampbox"><div class="lamp" id="lamp"></div><span>BEAT</span></div>
+      </header>
+      <div class="strip" id="strip" aria-hidden="true"></div>
+
+      <div class="deck">
+        <section class="row1">
+          <div>
+            <h3 class="sec-h">Level &amp; Tempo</h3>
+            <div class="knobs">
+              <div class="kw"><div class="knob" id="kVol" tabindex="0" role="slider" aria-label="Volume"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">Volume</div><div class="kv" id="vVol"></div></div>
+              <div class="kw"><div class="knob" id="kBal" tabindex="0" role="slider" aria-label="Balance"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">Balance</div><div class="kv" id="vBal"></div></div>
+              <div class="kw"><div class="knob" id="kAcc" tabindex="0" role="slider" aria-label="Accent"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">Accent</div><div class="kv" id="vAcc"></div></div>
+              <div class="kw"><div class="knob" id="kFill" tabindex="0" role="slider" aria-label="Auto fill-in"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">Auto Fill</div><div class="kv" id="vFill"></div></div>
+              <div class="kw big"><div class="knob" id="kTempo" tabindex="0" role="slider" aria-label="Tempo"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">Tempo</div><div class="kv" id="vTempo"></div></div>
+            </div>
+          </div>
+          <div class="sw">
+            <h3 class="sec-h">Variation</h3>
+            <div class="seg" id="varSeg">
+              <div class="mini"><span class="led" data-led="A"></span><button class="key dark" data-var="A" aria-label="Variation A"></button><span class="ml">A</span></div>
+              <div class="mini"><span class="led" data-led="B"></span><button class="key dark" data-var="B" aria-label="Variation B"></button><span class="ml">B</span></div>
+              <div class="mini"><span class="led" data-led="AB"></span><button class="key dark" data-var="AB" aria-label="Variation A plus B, alternating"></button><span class="ml">A+B</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h3 class="sec-h">Rhythm Select</h3>
+          <div class="groups" id="groups"></div>
+        </section>
+
+        <section class="row3">
+          <div style="min-width:0;flex:1 1 460px">
+            <h3 class="sec-h">Instruments</h3>
+            <div class="inst" id="inst"></div>
+          </div>
+          <div class="transport">
+            <div class="tk"><span class="led" id="ledFill"></span><button class="key" id="btnFill" aria-label="Fill-in or intro">Fill / Intro</button></div>
+            <div class="tk start"><span class="led" id="ledStart"></span><button class="key rust" id="btnStart">Start</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <div class="cheek r" aria-hidden="true"></div>
+
+    <section class="writer" aria-labelledby="wH">
+      <h3 class="sec-h" id="wH">Program Write</h3>
+      <div class="wtop">
+        <div class="grow"><p class="wnote" id="wNote"></p></div>
+        <div class="ctl"><span class="ml">Memory</span><div class="pill" id="memPill"></div></div>
+        <div class="ctl"><span class="ml">Steps</span><div class="pill" id="lenPill"></div></div>
+        <div class="ctl"><span class="ml">Feel</span><div class="pill" id="divPill"></div></div>
+        <div class="ctl"><span class="ml" id="copyLbl">Copy this rhythm into</span>
+          <div class="copy"><select id="copyTo" aria-label="Memory to copy into"></select><button class="act" id="btnCopy">Copy &amp; edit</button><button class="act ghost" id="btnClear">Clear</button></div>
+        </div>
+      </div>
+      <div class="gridwrap"><div class="grid" id="grid"></div></div>
+    </section>
+  </div>
+  <div class="foot"><span><kbd>Space</kbd> start / stop</span><span><kbd>F</kbd> fill-in</span><span>Drag knobs up or down · double-click to reset</span><span>Tap a row name to hear that voice</span></div>
+</main>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "parlor-pr34",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A playable browser rhythm machine with preset rhythms, variations, fills and programmable memories.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --open",
+    "build": "vite build",
+    "preview": "vite preview --open",
+    "test": "node --test tests/patterns.test.js"
+  },
+  "devDependencies": {
+    "vite": "5.4.11",
+    "vite-plugin-singlefile": "2.0.3"
+  }
+}
