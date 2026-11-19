@@ -1,4 +1,4 @@
-# Parlor PR-34
+# Rhythm-96
 
 A playable rhythm machine that runs in your browser. Pick a preset, flip between variations, add fills, or copy a preset into one of four memories and rework it step by step. Every sound is synthesized live with the Web Audio API.
 

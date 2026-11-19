@@ -1,4 +1,4 @@
-# Parlor PR-34
+# Rhythm-96
 
 A playable browser rhythm machine in the style of late-1970s preset drum boxes: 34 preset rhythms (17 styles × variations A/B), A+B alternation, manual and automatic fill-ins, accent, drum/percussion balance, instrument cancels, and four programmable memories with a step editor. All sound is synthesized live with the Web Audio API.
 
@@ -48,7 +48,7 @@ tests/                node:test unit tests.
 - Every color and font comes from the tokens at the top of `styles.css`. The look is skeuomorphic hardware: walnut cheeks, brushed-metal faceplate, ivory and rust keys, amber display.
 - Must work at phone width (about 400px) with no horizontal page scroll; only the step grid scrolls sideways.
 - Keep controls keyboard reachable with visible focus, and keep `aria-label`/`aria-pressed` on buttons.
-- Memories are stored under the localStorage key `pr34-memories-v1`. If you change the stored format, bump the key or migrate, and keep `deser()` tolerant of bad data.
+- Memories are stored under the localStorage key `rhythm96-memories-v1`. If you change the stored format, bump the key or migrate, and keep `deser()` tolerant of bad data.
 
 ## Originality rules
 
