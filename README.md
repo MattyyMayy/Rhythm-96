@@ -1,6 +1,6 @@
 # Rhythm-96
 
-A playable rhythm machine that runs in your browser. Pick a preset, flip between variations, add fills, or copy a preset into one of four memories and rework it step by step. Every sound is synthesized live with the Web Audio API.
+A playable rhythm machine that runs in your browser. Pick a preset, flip between variations, add fills, shape the sound with effects, or copy a preset into one of eight memories and rework it step by step. Every sound is synthesized live with the Web Audio API.
 
 ## Run it
 
@@ -23,6 +23,13 @@ Then open `dist/index.html`.
 
 ## Using it
 
+- **Humanize**: moves each note a little off the grid (up to about 14 ms) and changes its level a little, so the beat sounds less like a machine. Each sound on a step drifts on its own.
+- **Effects**: each knob is off at 0.
+  - **Drive**: distortion. **Crush**: fewer bits, for a gritty, lo-fi sound.
+  - **Filter** with an **LP / HP** switch: low pass makes the sound darker, high pass makes it thinner. **Reso** adds a peak at the cutoff.
+  - **Phaser**: a slow, sweeping swirl.
+  - **Delay**: echoes. **Time** sets the echo length in note values (1/16 to 1/2, dotted values marked with a dot), and it follows the tempo.
+  - **Reverb**: room and space.
 - **Sound**: four sound kits that change how every voice sounds, independent of the rhythm. **96** is the machine's own sound; **Studio** is a warm, round studio kit; **House** has a punchy kick, crisp hats and a big clap; **Techno** has a deep driven kick and hard metal hats. Press `K` to step through them.
 - **Rhythm Select**: 26 styles, each with variation A and B, including Jazz, House & Techno and UK Garage. Choosing a new one while playing switches at the next bar.
 - **Variation**: A, B, or A+B to alternate them every bar.
@@ -32,7 +39,7 @@ Then open `dist/index.html`.
 - **Swing**: delays every second sixteenth. 50% is straight; try about 58–62% for UK garage and house shuffle. Triplet rhythms are already swung, so the knob does not change them.
 - **Balance**: left favors drums (bass, snare, rim), right favors percussion.
 - **Instruments**: switch voice groups off and on. "Hats as Metal" swaps the hi-hats for a metallic tick.
-- **Program Write**: edit the four memories. Choose a preset and press **Copy & edit** to start from it. Edits save in your browser.
+- **Program Write**: edit the eight memories. Choose a preset and press **Copy & edit** to start from it. Edits save in your browser.
 
 Keyboard: `Space` starts and stops, `F` arms a fill, `K` selects the next sound kit. Knobs respond to dragging up or down, the mouse wheel and the arrow keys; double-click resets a knob.
 

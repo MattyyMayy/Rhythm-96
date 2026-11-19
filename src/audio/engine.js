@@ -2,9 +2,10 @@
 // The context is created lazily on the first user gesture (browsers block audio before that).
 import { makeKits, VGROUP, KIT_TONE } from './voices.js';
 import { S } from '../state.js';
+import { buildFx } from './fx.js';
 
 let ctx = null;
-let master, tone, drumBus, percBus, kits;
+let master, tone, drumBus, percBus, kits, fx;
 
 export const getContext = () => ctx;
 
@@ -21,7 +22,14 @@ export function initAudio() {
   master = ctx.createGain(); drumBus = ctx.createGain(); percBus = ctx.createGain();
   drumBus.connect(master); percBus.connect(master);
   tone = ctx.createBiquadFilter(); tone.type = 'lowpass'; tone.Q.value = 0.5;
-  master.connect(tone); tone.connect(comp); comp.connect(ctx.destination);
+  // Final limiter: catches peaks when several effects are turned up together.
+  const limit = ctx.createDynamicsCompressor();
+  limit.threshold.value = -2; limit.knee.value = 0; limit.ratio.value = 20;
+  limit.attack.value = 0.001; limit.release.value = 0.08;
+
+  master.connect(tone);
+  fx = buildFx(ctx, tone, comp);
+  comp.connect(limit); limit.connect(ctx.destination);
 
   const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 1.5, ctx.sampleRate);
   const d = noiseBuf.getChannelData(0);
@@ -30,6 +38,7 @@ export function initAudio() {
   kits = makeKits(ctx, noiseBuf);
   applyMix();
   applyKit();
+  applyFx();
   return ctx;
 }
 
@@ -41,6 +50,11 @@ export function applyMix() {
   // Balance 0 = drums only, 5 = both full, 10 = percussion only.
   drumBus.gain.setTargetAtTime(Math.min(1, (10 - S.bal) / 5), t, 0.02);
   percBus.gain.setTargetAtTime(Math.min(1, S.bal / 5), t, 0.02);
+}
+
+/** Push effect knob settings (and tempo, for the delay time) into the effects chain. */
+export function applyFx() {
+  if (ctx) fx.apply(S);
 }
 
 /** Set the master tone for the selected sound kit. */

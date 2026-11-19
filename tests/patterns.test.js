@@ -2,7 +2,9 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { STYLES, FILLS, GROUPS, P, fit } from '../src/patterns.js';
 import { VKEYS, VOICES, KITS, KIT_IDS, KIT_TONE, INST } from '../src/audio/voices.js';
-import { swingOffset } from '../src/sequencer.js';
+import { swingOffset, humanizeNote, HUMANIZE_MAX } from '../src/sequencer.js';
+import { filterFreq, filterQ, resoMakeup, driveMakeup, delaySeconds, driveCurve, crushCurve, DELAY_TIMES } from '../src/audio/fx.js';
+import { MEM, MEM_COUNT } from '../src/memory.js';
 
 const checkShape = (p, label) => {
   assert.ok([3, 4].includes(p.div), `${label}: div must be 3 or 4`);
@@ -74,4 +76,40 @@ test('swing delays only every second step of a straight grid', () => {
 test('every preset can be copied into a memory', async () => {
   const { ser, deser } = await import('../src/memory.js');
   for (const st of STYLES) for (const v of ['A', 'B']) assert.ok(deser(ser(st[v])), `${st.name} ${v}`);
+});
+
+test('there are eight program memories', () => {
+  assert.equal(MEM_COUNT, 8);
+  assert.equal(MEM.length, 8);
+});
+
+test('humanize: off is exact, on stays within bounds', () => {
+  assert.deepEqual(humanizeNote(0), { dt: 0, dv: 1 });
+  for (const r of [0, 0.5, 0.999]) {
+    const h = humanizeNote(10, () => r);
+    assert.ok(Math.abs(h.dt) <= HUMANIZE_MAX + 1e-12);
+    assert.ok(h.dv >= 0.82 && h.dv <= 1.18);
+  }
+  assert.ok(Math.abs(humanizeNote(5, () => 1).dt - HUMANIZE_MAX / 2) < 1e-12);
+});
+
+test('effects: knob at 0 leaves the sound unchanged', () => {
+  assert.equal(filterFreq(0, 'lp'), 20000);
+  assert.equal(filterFreq(0, 'hp'), 20);
+  assert.ok(filterFreq(10, 'lp') < 200 && filterFreq(10, 'hp') > 5000);
+  assert.ok(Math.abs(filterQ(0) - 0.7) < 1e-9);
+  for (const c of [driveCurve(0, 9), crushCurve(0, 9)]) {
+    c.forEach((y, i) => assert.ok(Math.abs(y - ((i / 8) * 2 - 1)) < 1e-6));
+  }
+  assert.equal(resoMakeup(10, 0), 1, 'no level change while the filter is open');
+  assert.ok(resoMakeup(10, 10) < 0.5);
+  assert.ok(Math.abs(driveMakeup(0) - 1) < 1e-9);
+  const d = driveCurve(10, 9);
+  assert.ok(d[6] > 0.5 && d[8] <= 1.000001, 'drive pushes the level up but stays in range');
+});
+
+test('delay time follows the tempo', () => {
+  const quarter = DELAY_TIMES.findIndex((t) => t[0] === '1/4');
+  assert.equal(delaySeconds(quarter, 120), 0.5);
+  assert.ok(DELAY_TIMES.every((_, i) => delaySeconds(i, 40) <= 4), 'fits in the 4 s delay line');
 });

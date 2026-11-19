@@ -11,7 +11,11 @@
 export const S = {
   tempo: 112, vol: 7, bal: 5, accent: 6, autoFill: 0,
   swing: 50,                          // 50 = straight; up to 75 delays every second sixteenth
+  humanize: 0,                        // 0..10: random timing and level drift per note
   kit: '96',                          // sound kit id, see KITS in audio/voices.js
+  // effects, each 0..10 with 0 = off
+  fxDrive: 0, fxCrush: 0, fxFilter: 0, fxReso: 0, fxFilterType: 'lp',
+  fxPhaser: 0, fxDelay: 0, fxTime: 2, fxReverb: 0,
   variation: 'A',                     // 'A' | 'B' | 'AB'
   active: { kind: 'preset', i: 0 },   // { kind: 'preset' | 'mem', i }
   queued: null,                       // selection waiting for the next bar while playing

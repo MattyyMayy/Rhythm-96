@@ -1,6 +1,6 @@
 # Rhythm-96
 
-A playable browser rhythm machine in the style of late-1970s preset drum boxes: 52 preset rhythms (26 styles × variations A/B, including Jazz, House & Techno and UK Garage), four sound kits, swing, A+B alternation, manual and automatic fill-ins, accent, drum/percussion balance, instrument cancels, and four programmable memories with a step editor. All sound is synthesized live with the Web Audio API.
+A playable browser rhythm machine in the style of late-1970s preset drum boxes: 52 preset rhythms (26 styles × variations A/B, including Jazz, House & Techno and UK Garage), four sound kits, swing, humanize, master effects (drive, crush, LP/HP filter with resonance, phaser, tempo-synced delay, reverb), A+B alternation, manual and automatic fill-ins, accent, drum/percussion balance, instrument cancels, and eight programmable memories with a step editor. All sound is synthesized live with the Web Audio API.
 
 Plain JavaScript (ES modules) and CSS, no framework. Vite is used only as the dev server and bundler.
 
@@ -21,10 +21,11 @@ index.html            Panel markup (static parts). Dynamic keys/switches are bui
 src/main.js           Entry point: imports CSS, initializes writer then panel.
 src/state.js          Shared state object `S` and a tiny event bus (on/emit).
 src/patterns.js       Preset rhythms, fills and panel groups. Pure data, testable in Node.
-src/memory.js         Four user memories (load/save to localStorage, edit helpers).
+src/memory.js         Eight user memories (load/save to localStorage, edit helpers).
 src/sequencer.js      Look-ahead scheduler, start/stop, select, fill, variation.
 src/audio/voices.js   Voice list, instrument-cancel groups, synthesis recipes.
 src/audio/engine.js   AudioContext, mixer buses (drum/perc/master), play/audition.
+src/audio/fx.js       Master effects chain and pure knob-to-parameter mappings.
 src/ui/knob.js        Rotary knob control (drag, wheel, keys, double-click reset).
 src/ui/panel.js       Front panel wiring, display, LEDs, animation loop.
 src/ui/writer.js      Program Write step grid.
@@ -40,6 +41,8 @@ tests/                node:test unit tests.
 - **Bar-line behavior.** Choosing a rhythm while playing queues it (`S.queued`) and it takes over at the next bar. Fills replace one whole bar. Auto Fill plays a fill on every Nth bar.
 - **Voices.** Each voice recipe is `(time, velocity, outputNode)`. Adding a voice means: add it to `VOICES` (key, name, bus), add a recipe to the `base` kit in `makeKits`, and optionally to an `INST` cancel group. Patterns and the editor pick it up automatically.
 - **Sound kits.** `KITS` in `voices.js` lists the kits; "96" (the `base` recipes) is the default. Other kits override only some voices and fall back to "96" for the rest. `KIT_TONE` sets a master low-pass per kit. `S.kit` holds the current kit; `engine.play()` reads it for every note, so a kit change takes effect on the next note. Adding a kit means: add it to `KITS` and `KIT_TONE`, add an override object in `makeKits`, and return it.
+- **Effects.** Signal path: drum/perc buses -> master -> kit tone -> `fx.js` (drive -> crush -> filter -> phaser, with delay and reverb sends) -> compressor -> limiter -> output. Every effect knob is 0..10 with 0 meaning no change; keep that rule for new effects. Effect values live in `S.fx*`; call `applyFx()` after a change (and after a tempo change, for the delay time). Drive and filter resonance have level makeup so turning them up does not jump in volume. A feedback loop in Web Audio must contain a `DelayNode` or it is silenced.
+- **Humanize.** `humanizeNote()` in `sequencer.js` gives each note a random time offset (up to `HUMANIZE_MAX`) and level factor. It never schedules a note before `currentTime`.
 - **Swing.** `S.swing` is 50 (straight) to 75. `swingOffset()` in `sequencer.js` delays every second step of an even grid; the bar grid (`S.nextTime`) itself stays straight.
 - **Audio start.** Browsers block audio until a user gesture, so `initAudio()` runs on the first Start or audition click.
 
@@ -50,7 +53,7 @@ tests/                node:test unit tests.
 - Every color and font comes from the tokens at the top of `styles.css`. The look is skeuomorphic hardware: walnut cheeks, brushed-metal faceplate, ivory and rust keys, amber display.
 - Must work at phone width (about 400px) with no horizontal page scroll; only the step grid scrolls sideways.
 - Keep controls keyboard reachable with visible focus, and keep `aria-label`/`aria-pressed` on buttons.
-- Memories are stored under the localStorage key `rhythm96-memories-v1`. If you change the stored format, bump the key or migrate, and keep `deser()` tolerant of bad data.
+- Memories are stored under the localStorage key `rhythm96-memories-v1` as an array of up to `MEM_COUNT` (8) patterns; shorter arrays from older saves load and the rest stay blank. If you change the stored format, bump the key or migrate, and keep `deser()` tolerant of bad data.
 
 ## Originality rules
 

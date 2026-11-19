@@ -32,7 +32,7 @@ export function renderWriter() {
 
   if (mi < 0) {
     const firstEmpty = MEM.findIndex(isEmpty);
-    if (document.activeElement !== copyTo) copyTo.value = firstEmpty >= 0 ? firstEmpty : 3;
+    if (document.activeElement !== copyTo) copyTo.value = firstEmpty >= 0 ? firstEmpty : MEM.length - 1;
     copyLbl.textContent = 'Copy this rhythm into';
     copyTo.hidden = false; btnCopy.hidden = false; btnClear.hidden = true;
     const vname = S.variation === 'B' ? 'B' : 'A';

@@ -3,7 +3,8 @@
 import { S, on, emit, sameSel } from '../state.js';
 import { STYLES, GROUPS } from '../patterns.js';
 import { INST, KITS } from '../audio/voices.js';
-import { applyMix, applyKit, getContext } from '../audio/engine.js';
+import { applyMix, applyKit, applyFx, getContext } from '../audio/engine.js';
+import { DELAY_TIMES, filterFreq } from '../audio/fx.js';
 import { MEM } from '../memory.js';
 import { visualQueue, select, setVariation, toggle, toggleFill, shownPattern, selectionName } from '../sequencer.js';
 import { Knob } from './knob.js';
@@ -28,7 +29,62 @@ function initKnobs() {
   Knob($('kSwing'), { min: 50, max: 75, value: S.swing, reset: 50, out: 'vSwing', wheel: 1,
     fmt: (x) => (x === 50 ? 'off' : x + '%'), onChange: (x) => { S.swing = x; } });
   Knob($('kTempo'), { min: 40, max: 240, value: S.tempo, reset: 112, out: 'vTempo', wheel: 1,
-    fmt: (x) => x + ' bpm', onChange: (x) => { S.tempo = x; dTempo.textContent = x; } });
+    fmt: (x) => x + ' bpm', onChange: (x) => { S.tempo = x; dTempo.textContent = x; applyFx(); } });
+  Knob($('kHum'), { min: 0, max: 10, step: 0.5, value: S.humanize, reset: 0, out: 'vHum', wheel: 0.5,
+    fmt: (x) => (x ? x.toFixed(1) : 'off'), onChange: (x) => { S.humanize = x; } });
+}
+
+/* ---------- effects ---------- */
+const fmtHz = (f) => (f >= 1000 ? (f / 1000).toFixed(f >= 10000 ? 0 : 1) + 'k' : Math.round(f) + '');
+const off = (fmt) => (x) => (x ? fmt(x) : 'off');
+const FX = [
+  ['Drive', 'fxDrive', 'Distortion drive', off((x) => x.toFixed(1))],
+  ['Crush', 'fxCrush', 'Bit crush', off((x) => (12 - x * 0.9).toFixed(1) + ' bit')],
+  ['Filter', 'fxFilter', 'Filter amount', off((x) => fmtHz(filterFreq(x, S.fxFilterType)) + ' Hz')],
+  null, // filter type switch goes here
+  ['Reso', 'fxReso', 'Filter resonance', off((x) => x.toFixed(1))],
+  ['Phaser', 'fxPhaser', 'Phaser', off((x) => x.toFixed(1))],
+  ['Delay', 'fxDelay', 'Delay amount', off((x) => x.toFixed(1))],
+  ['Time', 'fxTime', 'Delay time, synced to tempo', null],
+  ['Reverb', 'fxReverb', 'Reverb', off((x) => x.toFixed(1))],
+];
+let filterKnob = null;
+function knobEl(id, label, aria) {
+  const w = document.createElement('div');
+  w.className = 'kw';
+  w.innerHTML = `<div class="knob" id="k_${id}" tabindex="0" role="slider" aria-label="${aria}"><div class="ticks"></div><div class="rot"><div class="cap"></div><div class="ptr"></div></div></div><div class="kl">${label}</div><div class="kv" id="v_${id}"></div>`;
+  return w;
+}
+function initFx() {
+  const el = $('fx');
+  FX.forEach((f) => {
+    if (!f) {
+      const sw = document.createElement('div');
+      sw.className = 'sw fxsw';
+      sw.innerHTML = `<div class="seg">${[['lp', 'Low pass'], ['hp', 'High pass']].map(([t, name]) =>
+        `<div class="mini"><span class="led" data-fled="${t}"></span><button class="key dark" data-ftype="${t}" aria-label="${name} filter"></button><span class="ml">${t.toUpperCase()}</span></div>`).join('')}</div>`;
+      sw.querySelectorAll('[data-ftype]').forEach((b) => b.addEventListener('click', () => {
+        S.fxFilterType = b.dataset.ftype; renderFilterType(); applyFx();
+        filterKnob.set(S.fxFilter, false); // refresh the Hz readout for the new type
+      }));
+      el.appendChild(sw);
+      return;
+    }
+    const [label, key, aria, fmt] = f;
+    const id = key.toLowerCase();
+    el.appendChild(knobEl(id, label, aria));
+    const k = key === 'fxTime'
+      ? Knob($('k_' + id), { steps: DELAY_TIMES.map((_, i) => i), value: S.fxTime, reset: 2, out: 'v_' + id,
+        fmt: (i) => DELAY_TIMES[i][0], onChange: (i) => { S.fxTime = i; applyFx(); } })
+      : Knob($('k_' + id), { min: 0, max: 10, step: 0.5, value: S[key], reset: 0, out: 'v_' + id, wheel: 0.5,
+        fmt, onChange: (x) => { S[key] = x; applyFx(); } });
+    if (key === 'fxFilter') filterKnob = k;
+  });
+  renderFilterType();
+}
+function renderFilterType() {
+  document.querySelectorAll('[data-fled]').forEach((l) => l.classList.toggle('on', l.dataset.fled === S.fxFilterType));
+  document.querySelectorAll('[data-ftype]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.ftype === S.fxFilterType)));
 }
 
 /* ---------- rhythm select ---------- */
@@ -213,6 +269,7 @@ export function initPanel() {
   dName = $('dName'); dTempo = $('dTempo'); dSub = $('dSub'); dBar = $('dBar');
 
   initKnobs();
+  initFx();
   initKits();
   initRhythmKeys();
   initVariation();

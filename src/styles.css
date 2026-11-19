@@ -141,6 +141,13 @@ button:focus-visible,.knob:focus-visible,select:focus-visible{outline:2px solid 
 .rkey .n{font:11px var(--f-mono);opacity:.55}
 .key.rust .n{opacity:.75}
 
+/* effects */
+.knobs.fx{gap:18px 22px;align-items:flex-start}
+.fxsw{align-self:center;margin-top:-6px}
+.fxsw .seg{gap:6px}
+.fxsw .mini{min-width:40px}
+.fxsw .mini .key{width:40px;height:30px}
+
 /* sound kits */
 .kits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 10px}
 .kkey{min-height:66px;padding:9px 10px 10px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;align-items:center;gap:4px 9px;text-align:left}

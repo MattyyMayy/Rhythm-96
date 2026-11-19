@@ -1,9 +1,11 @@
-// The four user-programmable rhythm memories, saved to localStorage.
+// The eight user-programmable rhythm memories, saved to localStorage.
+// Older saves with four memories still load; the extra slots start empty.
 import { P } from './patterns.js';
 import { VKEYS } from './audio/voices.js';
 
 const KEY = 'rhythm96-memories-v1';
 export const LENGTHS = [9, 12, 16, 24, 32];
+export const MEM_COUNT = 8;
 
 export const blank = (len = 16, div = 4) => P(len, div, {}, '');
 
@@ -32,13 +34,13 @@ export function deser(o) {
 export const isEmpty = (p) => !p.acc.some(Boolean) && VKEYS.every((k) => !p.v[k].some(Boolean));
 
 /** Live memory slots. Mutated in place so other modules can hold references. */
-export const MEM = [exampleMem(), blank(), blank(), blank()];
+export const MEM = [exampleMem(), ...Array.from({ length: MEM_COUNT - 1 }, () => blank())];
 
 try {
   const raw = localStorage.getItem(KEY);
   if (raw) {
     const arr = JSON.parse(raw);
-    if (Array.isArray(arr) && arr.length === 4) {
+    if (Array.isArray(arr) && arr.length >= 1 && arr.length <= MEM_COUNT) {
       const d = arr.map(deser);
       if (d.every(Boolean)) d.forEach((p, i) => { MEM[i] = p; });
     }

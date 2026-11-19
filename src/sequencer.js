@@ -13,6 +13,19 @@ const BASE_VEL = 0.62;
 
 export const visualQueue = [];
 
+/** Most a note can drift from the grid at Humanize 10, in seconds. */
+export const HUMANIZE_MAX = 0.014;
+
+/**
+ * Humanize: a small random time offset (dt, seconds) and level factor (dv) for one note.
+ * Each voice on a step drifts on its own, like a drummer's hands and feet.
+ */
+export function humanizeNote(amount, rand = Math.random) {
+  const a = Math.max(0, Math.min(10, amount)) / 10;
+  if (!a) return { dt: 0, dv: 1 };
+  return { dt: (rand() * 2 - 1) * a * HUMANIZE_MAX, dv: 1 + (rand() * 2 - 1) * a * 0.18 };
+}
+
 /**
  * Swing: how late a step plays, as a fraction of one step.
  * Only every second step of a straight (even) grid moves; triplet feels are already swung.
@@ -63,9 +76,11 @@ function scheduleStep() {
   const stepDur = 60 / S.tempo / p.div;
   const t = S.nextTime + swingOffset(i, p.div, S.swing) * stepDur;
   const vel = p.acc[i] ? BASE_VEL * (1 + (S.accent / 10) * 1.1) : BASE_VEL;
+  const now = getContext().currentTime;
   for (const k of VKEYS) {
     if (!p.v[k][i] || S.cancel.has(k)) continue;
-    play(S.metal && (k === 'HH' || k === 'OH') ? 'MB' : k, t, vel);
+    const h = humanizeNote(S.humanize);
+    play(S.metal && (k === 'HH' || k === 'OH') ? 'MB' : k, Math.max(now, t + h.dt), vel * h.dv);
   }
   visualQueue.push({ t, step: i, len: p.len, div: p.div, pacc: p.acc, fill: S.barFill, bar: S.bar, v: S.barVar, base: S.barBase });
   S.nextTime += stepDur;
